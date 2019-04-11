@@ -2,11 +2,12 @@ import { gql } from 'apollo-server';
 
 export const typeDefs = gql`
   type Query {
-    getPlayer(id: ID!): Player
-    getGame(gameId: String!): Game
+    getPlayer(playrName: String!): Player
+    getGame(readableGameId: String!): Game
   }
   
   type Mutation {
+    initializeGame(readableGameId: String!): Game
     changeLeader(gameId: ID!, playerId: ID!): Game
     proposeArmedPlayer(gameId: ID!, playersIds: [ID]!): Game
     armPlayer(gameId: ID!, playerIds: [ID]!): Game
@@ -16,7 +17,7 @@ export const typeDefs = gql`
     failCurrentMission(gameId: ID!): Game
     succeedCurrentMission(gameId: ID!): Game
     advanceMission(gameId: ID!): Game
-    checkForVictor(gameId: ID!): Affiliation
+    checkForWinner(gameId: ID!): Affiliation
   }
   
   type Game {
