@@ -15,6 +15,7 @@ export const typeDefs = gql`
     resetVoteRejectionCount(gameId: ID!): Game
     failCurrentMission(gameId: ID!): Game
     succeedCurrentMission(gameId: ID!): Game
+    advanceMission(gameId: ID!): Game
   }
   
   type Game {
@@ -26,6 +27,7 @@ export const typeDefs = gql`
   
   type GameState {
     leader: Player
+    currentMission: Mission
     missions: [Mission]
     proposedArmedPlayers: [Player]
     armedPlayers: [Player]
