@@ -6,9 +6,20 @@ export const typeDefs = gql`
     getGame(gameId: String!): Game
   }
   
+  type Mutation {
+    changeLeader(gameId: ID!, player: Player): Game
+    proposeArmedPlayers(gameId: ID!, players: [Player]): Game
+    armPlayers(gameId: ID!, players: [Player]): Game
+    resetProposedArmedPlayers(gameId: ID!): Game
+    incrementVoteRejectionCount(gameId: ID!): Game
+    resetVoteRejectionCount(gameId: ID!): Game
+    failCurrentMission(gameId: ID!): Game
+    succeedCurrentMission(gameId: ID!): Game
+  }
+  
   type Game {
     id: ID!
-    gameId: String!
+    readableGameId: String!
     players: [Player]!
     currentState: GameState
   }
@@ -16,6 +27,7 @@ export const typeDefs = gql`
   type GameState {
     leader: Player
     missions: [Mission]
+    proposedArmedPlayers: [Player]
     armedPlayers: [Player]
     voteRejectionCount: Int!
   }
@@ -23,7 +35,7 @@ export const typeDefs = gql`
   type Player {
     id: ID!
     name: String!
-    role: RoleCard
+    roleCard: RoleCard
     attendedMissions: [Mission]
   }
   
