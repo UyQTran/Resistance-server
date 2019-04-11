@@ -7,9 +7,9 @@ export const typeDefs = gql`
   }
   
   type Mutation {
-    changeLeader(gameId: ID!, player: Player): Game
-    proposeArmedPlayers(gameId: ID!, players: [Player]): Game
-    armPlayers(gameId: ID!, players: [Player]): Game
+    changeLeader(gameId: ID!, playerId: ID!): Game
+    proposeArmedPlayer(gameId: ID!, playersIds: [ID]!): Game
+    armPlayer(gameId: ID!, playerIds: [ID]!): Game
     resetProposedArmedPlayers(gameId: ID!): Game
     incrementVoteRejectionCount(gameId: ID!): Game
     resetVoteRejectionCount(gameId: ID!): Game
