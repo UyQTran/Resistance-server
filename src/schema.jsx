@@ -2,7 +2,7 @@ import { gql } from 'apollo-server';
 
 export const typeDefs = gql`
   type Query {
-    getPlayer(playrName: String!): Player
+    getPlayer(playerName: String!): Player
     getGame(readableGameId: String!): Game
   }
   
