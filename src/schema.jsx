@@ -16,6 +16,7 @@ export const typeDefs = gql`
     failCurrentMission(gameId: ID!): Game
     succeedCurrentMission(gameId: ID!): Game
     advanceMission(gameId: ID!): Game
+    checkForVictor(gameId: ID!): Affiliation
   }
   
   type Game {
