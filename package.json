@@ -1,8 +1,21 @@
 {
-  "name": "Resistance-server",
+  "name": "resistance-server",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/UyQTran/Resistance-server",
   "author": "uqtontran@gmail.com",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.4.3",
+    "@babel/preset-es2015": "^7.0.0-beta.53"
+  },
+  "scripts": {
+    "start": "nodemon --exec babel-node ./src/server.jsx"
+  },
+  "dependencies": {
+    "apollo-server": "^2.4.8",
+    "graphql": "^14.2.1"
+  }
 }
