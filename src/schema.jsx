@@ -2,22 +2,20 @@ import { gql } from 'apollo-server';
 
 export const typeDefs = gql`
   type Query {
-    getPlayer(playerName: String!): Player
-    getGame(readableGameId: String!): Game
+    getPlayer(readableGameId: String!, playerName: String!): Player
+    getGameState(readableGameId: String!): GameState
+    checkForWinner(gameId: ID!): Affiliation
   }
   
   type Mutation {
-    initializeGame(readableGameId: String!): Game
-    changeLeader(gameId: ID!, playerId: ID!): Game
-    proposeArmedPlayer(gameId: ID!, playersIds: [ID]!): Game
-    armPlayer(gameId: ID!, playerIds: [ID]!): Game
-    resetProposedArmedPlayers(gameId: ID!): Game
+    initializeGame(playerNames: [String]!): Game
+    changeLeader(gameId: ID!, playerName: String): Game
+    proposeArmedPlayers(gameId: ID!, playersNames: [String]!): Game
+    armPlayers(gameId: ID!): Game
+    resetArmedPlayers(gameId: ID!): Game
     incrementVoteRejectionCount(gameId: ID!): Game
     resetVoteRejectionCount(gameId: ID!): Game
-    failCurrentMission(gameId: ID!): Game
-    succeedCurrentMission(gameId: ID!): Game
-    advanceMission(gameId: ID!): Game
-    checkForWinner(gameId: ID!): Affiliation
+    finishCurrentMission(gameId: ID!, teamWon: affiliation: Affiliation!): Game
   }
   
   type Game {
@@ -28,17 +26,18 @@ export const typeDefs = gql`
   }
   
   type GameState {
-    leader: Player
+    leaderName: String!
     currentMission: Mission
     missions: [Mission]
-    proposedArmedPlayers: [Player]
-    armedPlayers: [Player]
+    proposedArmedPlayerNames: [String]!
+    armedPlayerNames: [String]!
     voteRejectionCount: Int!
   }
   
   type Player {
     id: ID!
     name: String!
+    number: Int!
     roleCard: RoleCard
     attendedMissions: [Mission]
   }
@@ -51,7 +50,7 @@ export const typeDefs = gql`
   type Mission {
     number: Int!
     requiredPlayers: Int!
-    requiredFailsForSpiesToWin: Int!
+    requiredFailsToFail: Int!
     teamWon: Affiliation
   }
   
