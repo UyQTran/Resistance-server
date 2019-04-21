@@ -8,14 +8,15 @@ export const typeDefs = gql`
   }
   
   type Mutation {
-    initializeGame(playerNames: [String]!): Game
-    changeLeader(gameId: ID!, playerName: String): Game
-    proposeArmedPlayers(gameId: ID!, playersNames: [String]!): Game
-    armPlayers(gameId: ID!): Game
-    resetArmedPlayers(gameId: ID!): Game
-    incrementVoteRejectionCount(gameId: ID!): Game
-    resetVoteRejectionCount(gameId: ID!): Game
-    finishCurrentMission(gameId: ID!, teamWon: affiliation: Affiliation!): Game
+    initializeGame(playerNames: [String]!): GameState
+    rotateLeader(gameId: ID!): GameState
+    changeLeader(gameId: ID!, playerName: String): GameState
+    proposeArmedPlayers(gameId: ID!, playersNames: [String]!): GameState
+    armPlayers(gameId: ID!): GameState
+    resetArmedPlayers(gameId: ID!): GameState
+    incrementVoteRejectionCount(gameId: ID!): GameState
+    resetVoteRejectionCount(gameId: ID!): GameState
+    finishCurrentMission(gameId: ID!, teamWon: affiliation: Affiliation!): GameState
   }
   
   type Game {
@@ -26,6 +27,7 @@ export const typeDefs = gql`
   }
   
   type GameState {
+    playerNames: [String]!
     leaderName: String!
     currentMission: Mission
     missions: [Mission]

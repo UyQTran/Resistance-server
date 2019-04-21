@@ -89,8 +89,12 @@ export const resolvers = {
         .players.find(player => player.name === playerName),
     getGameState: (_, {readableGameId}) =>
       cache
-        .games.find(game => game.readableGameId === readableGameId).gameState
-  },
+        .games.find(game => game.readableGameId === readableGameId).currentState,
+    checkForWinner: (_, gameId) => {
+
+    }
+  }
+  ,
   Mutation: {
     initializeGame: (_, {playerNames}) => {
       const roleDeck = generateDeck(playerNames.length);
@@ -110,6 +114,8 @@ export const resolvers = {
       };
 
       const currentState = {
+        playerNames,
+        leaderName: shuffle(playerNames).pop(),
         currentMission,
         voteRejectionCount: 0,
         missions: []
@@ -120,26 +126,25 @@ export const resolvers = {
         readableGameId: hri.random(),
         players,
         currentState,
-        leader: shuffle(players).pop()
       };
 
       cache.games.push(newGame);
 
       return newGame;
     },
+    rotateLeader: (_, {gameId, playerName}) => {
+      const game = cache.games.find(game => game.id === gameId);
+      let currentLeaderIndex = game.players.reduce((acc, player, index) =>
+        player.name === game.currentState.leaderName ? index : 0);
+
+      if (currentLeaderIndex + 1 === game.players.length)
+        currentLeaderIndex = 0;
+
+      game.currentState.leaderName = game.players[currentLeaderIndex].name;
+    },
     changeLeader: (_, {gameId, playerName}) => {
       const game = cache.games.find(game => game.id === gameId);
-      if(playerName) {
-        game.currentState.leaderName = playerName;
-      } else {
-        let currentLeaderIndex = game.players.reduce((acc, player, index) =>
-          player.name === game.currentState.leaderName ? index : 0);
-
-        if (currentLeaderIndex + 1 === game.players.length)
-          currentLeaderIndex = 0;
-
-        game.currentState.leaderName = game.players[currentLeaderIndex].name;
-      }
+      game.currentState.leaderName = playerName;
     },
     proposeArmedPlayers: (_, {gameId, playerNames}) => {
       const game = cache.games.find(game => game.id === gameId);
