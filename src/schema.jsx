@@ -7,8 +7,14 @@ export const typeDefs = gql`
     checkForWinner(gameId: ID!): Affiliation
   }
   
+  type Subscription {
+    isGameReadyToStart(readableGameId: String!): Boolean
+  }
+  
   type Mutation {
-    initializeGame(playerNames: [String]!): GameState
+    initializeGame(gameMasterName: String!, playerCount: Int!): Game
+    joinGame(readableGameId: String!, playerName: String!): Game
+    startGame(gameId: ID!, playerNames: [String]!): GameState
     rotateLeader(gameId: ID!): GameState
     changeLeader(gameId: ID!, playerName: String): GameState
     proposeArmedPlayers(gameId: ID!, playersNames: [String]!): GameState
@@ -21,8 +27,10 @@ export const typeDefs = gql`
   
   type Game {
     id: ID!
+    gameMasterName: String!
     readableGameId: String!
     players: [Player]!
+    playerCount: Int!
     currentState: GameState
   }
   

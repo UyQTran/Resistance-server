@@ -80,28 +80,59 @@ export const resolvers = {
     getGameState: (_, {readableGameId}) =>
       cache
         .games.find(game => game.readableGameId === readableGameId).currentState,
-    checkForWinner: (_, gameId) => {
-
+    checkForWinner: (_, {gameId}) => cache.games.find(game => game.id === gameId),
+  },
+  Subscription: {
+    isGameReadyToStart: (_, {readableGameId}) => {
+      const game = cache.games.find(game => game.readableGameId === readableGameId);
+      return game.playerCount === game.players.length;
     }
-  }
-  ,
+  },
   Mutation: {
-    initializeGame: (_, {playerNames}) => {
-      const roleDeck = generateDeck(playerNames.length);
-      const players = playerNames.map((playerName, index) => (
+    initializeGame: (_, {gameMasterName, playerCount}) => {
+      if(playerCount < minimumNumberOfPlayers) {
+        return {};
+      }
+
+      const newGame = {
+        gameMasterName,
+        playerCount,
+        id: uuid(),
+        readableGameId: hri.random(),
+        players: []
+      };
+
+      newGame.players.push(
         {
           id: uuid(),
-          name: playerName,
-          number: index,
-          roleCard: roleDeck.pop()
+          name: gameMasterName
         }
-      ));
+      );
+
+      return newGame;
+    },
+    joinGame: (_, {readableGameId, playerName}) => {
+      const game = cache.games.find(game => game.readableGameId === readableGameId);
+      game.players.push({
+        id: uuid(),
+        name: playerName,
+      });
+    },
+    startGame: (_, {gameId}) => {
+      const game = cache.games.find(game => game.id === gameId);
+      const roleDeck = generateDeck(playerNames.length);
+      const players = game.players.map((player, index) => {
+        player.number = index;
+        player.roleCard = roleDeck.pop();
+      });
 
       const currentMission = {
         number: 1,
         requiredPlayers: getMissionRequiredPlayers(players.length, 1),
         requiredFailsToFail: getMissionRequiredFailsToFail(players.length, 1)
       };
+
+      const playerNames = players.map(player => player.name);
 
       const currentState = {
         playerNames,
@@ -111,16 +142,9 @@ export const resolvers = {
         missions: []
       };
 
-      const newGame = {
-        id: uuid(),
-        readableGameId: hri.random(),
-        players,
-        currentState,
-      };
+      game.currentState = currentState;
 
-      cache.games.push(newGame);
-
-      return newGame;
+      return currentState;
     },
     rotateLeader: (_, {gameId, playerName}) => {
       const game = cache.games.find(game => game.id === gameId);
@@ -135,27 +159,33 @@ export const resolvers = {
     changeLeader: (_, {gameId, playerName}) => {
       const game = cache.games.find(game => game.id === gameId);
       game.currentState.leaderName = playerName;
+      return game.currentState;
     },
     proposeArmedPlayers: (_, {gameId, playerNames}) => {
       const game = cache.games.find(game => game.id === gameId);
       game.currentState.proposedArmedPlayerNames = playerNames;
+      return game.currentState;
     },
     armPlayers: (_, {gameId}) => {
       const game = cache.games.find(game => game.id === gameId);
       game.currentState.armedPlayerNames = game.currentState.proposedArmedPlayerNames;
       game.currentState.proposedArmedPlayerNames = [];
+      return game.currentState;
     },
     resetArmedPlayers: (_, {gameId}) => {
       const game = cache.games.find(game => game.id === gameId);
       game.currentState.armedPlayerNames = [];
+      return game.currentState;
     },
     incrementVoteRejectionCount: (_, {gameId}) => {
       const game = cache.games.find(game => game.id === gameId);
       game.currentState.voteRejectionCount++;
+      return game.currentState;
     },
     resetVoteRejectionCount: (_, {gameId}) => {
       const game = cache.games.find(game => game.id === gameId);
       game.currentState.voteRejectionCount = 0;
+      return game.currentState;
     },
     finishCurrentMission: (_, {gameId, affiliation}) => {
       const game = cache.games.find(game => game.id === gameId);
@@ -170,6 +200,7 @@ export const resolvers = {
         requiredPlayers: getMissionRequiredPlayers(players, nextMissionNumber),
         requiredFailsToFail: getMissionRequiredFailsToFail(players, nextMissionNumber)
       };
+      return game.currentState;
     },
   },
 };
