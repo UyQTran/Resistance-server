@@ -80,7 +80,22 @@ export const resolvers = {
     getGameState: (_, {readableGameId}) =>
       cache
         .games.find(game => game.readableGameId === readableGameId).currentState,
-    checkForWinner: (_, {gameId}) => cache.games.find(game => game.id === gameId),
+    checkForWinner: (_, {gameId}) => {
+      const missions = cache.games.find(game => game.id === gameId).currentState.missions;
+      const teamPoints = missions.reduce(
+        (acc, mission) => (
+          mission.teamWon === AffiliationEnum.RESISTANCE ?
+            acc.resistancePoints++ :
+            acc.spyPoints++
+        ),
+        {resistancePoints: 0, spyPoints: 0});
+      if(teamPoints.resistancePoints >= 3) {
+        return AffiliationEnum.RESISTANCE;
+      }
+      if(teamPoints.spyPoints >= 3) {
+        return AffiliationEnum.SPY;
+      }
+    },
   },
   Subscription: {
     isGameReadyToStart: (_, {readableGameId}) => {
