@@ -95,6 +95,8 @@ export const resolvers = {
       if(teamPoints.spyPoints >= 3) {
         return AffiliationEnum.SPY;
       }
+
+      return null;
     },
   },
   Subscription: {
