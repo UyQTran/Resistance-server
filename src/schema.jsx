@@ -16,7 +16,7 @@ export const typeDefs = gql`
     resetArmedPlayers(gameId: ID!): GameState
     incrementVoteRejectionCount(gameId: ID!): GameState
     resetVoteRejectionCount(gameId: ID!): GameState
-    finishCurrentMission(gameId: ID!, teamWon: affiliation: Affiliation!): GameState
+    finishCurrentMission(gameId: ID!, teamWon: Affiliation!): GameState
   }
   
   type Game {

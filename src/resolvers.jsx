@@ -4,6 +4,8 @@ import uuid from 'uuid/v4';
 const AffiliationEnum = Object.freeze({"SPY":0, "RESISTANCE":1});
 const RoleEnum = Object.freeze({"NONE":0});
 
+const minimumNumberOfPlayers = 5;
+
 const cache = {
   games: []
 };
@@ -74,11 +76,11 @@ const generateDeck = (playerCount) => {
 };
 
 const getMissionRequiredPlayers = (playerCount, missionNumber) => {
-  return missionRequiredPlayers[playerCount-5][missionNumber-1];
+  return missionRequiredPlayers[playerCount-minimumNumberOfPlayers][missionNumber-1];
 };
 
 const getMissionRequiredFailsToFail = (playerCount, missionNumber) => {
-  return missionRequiredFailsToFail[playerCount-5][missionNumber-1];
+  return missionRequiredFailsToFail[playerCount-minimumNumberOfPlayers][missionNumber-1];
 };
 
 export const resolvers = {
@@ -155,7 +157,7 @@ export const resolvers = {
       game.currentState.armedPlayerNames = game.currentState.proposedArmedPlayerNames;
       game.currentState.proposedArmedPlayerNames = [];
     },
-    resetProposedArmedPlayers: (_, {gameId}) => {
+    resetArmedPlayers: (_, {gameId}) => {
       const game = cache.games.find(game => game.id === gameId);
       game.currentState.armedPlayerNames = [];
     },
@@ -182,5 +184,4 @@ export const resolvers = {
       };
     },
   },
-
 };
