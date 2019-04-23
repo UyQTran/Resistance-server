@@ -27,7 +27,9 @@ const missionRequiredFailsToFail = [
   [1,1,1,2,1]
 ];
 
-const shuffle = (array) => {
+const spyCountByNumberOfPlayers = [2, 2, 3, 3, 3, 4];
+
+const shuffle = array => {
   let currentIndex = array.length, temporaryValue, randomIndex;
 
   // While there remain elements to shuffle...
@@ -46,23 +48,9 @@ const shuffle = (array) => {
   return array;
 };
 
-const getSpyCount = (playerCount) => {
-  switch(playerCount) {
-    case 5:
-    case 6:
-      return 2;
-    case 7:
-    case 8:
-    case 9:
-      return 3;
-    case 10:
-      return 4;
-    default:
-      return 0;
-  }
-};
+const getSpyCount = playerCount => spyCountByNumberOfPlayers[playerCount - minimumNumberOfPlayers];
 
-const generateDeck = (playerCount) => {
+const generateDeck = playerCount => {
   let spyCount = getSpyCount(playerCount);
   let i;
   const deck = [];
